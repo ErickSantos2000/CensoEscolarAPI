@@ -1,7 +1,6 @@
-
 from flask import Flask
 from helpers.database import close_conn
-from controller.InstituicaoEnsinoController import instituicao_bp
+from controllers.InstituicoesEnsinoController import instituicao_bp
  
 # instancia o app flask
 app = Flask(__name__)

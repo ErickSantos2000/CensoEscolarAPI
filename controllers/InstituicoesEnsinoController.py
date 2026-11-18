@@ -9,7 +9,17 @@ instituicaoEnsinoService = InstituicaoEnsinoService()
 
 @instituicao_bp.get("/instituicoesensino")
 def getAllInstituicoes():
-    insituicoesEnsinoReponse = instituicaoEnsinoService.get_all()
+    pagina = request.args.get("pagina", 1, type=int)
+    limite = request.args.get("limite", 10, type=int)
+
+    # rejeita valores menores ou igual a zero
+    if pagina < 1 or limite < 1:
+        return {"erro": "pagina e limite devem ser maiores que 0"}, 400
+
+    # limita o numero de paginas
+    limite = min(limite, 100)
+
+    insituicoesEnsinoReponse = instituicaoEnsinoService.get_all(pagina, limite)
 
     return insituicoesEnsinoReponse, 200
 

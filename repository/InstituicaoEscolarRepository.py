@@ -3,20 +3,27 @@ from helpers.database import get_conn
 
 class InstituicaoEnsinoRepository:
 
-    def getAllInstituicoes(self):
-        # abre a conexão com o banco de dados
+    # a função recebe limit(quantidade de registros) e offset (quantidade de registros a pular)
+    def getAllInstituicoes(self, limit, offset):
         conn = get_conn()
-
-        # cria um um cursor, obj responsavel por executar comandos SQL e navegar pelos resultados
         cursor = conn.cursor()
 
-        # executa a DML de consulta
-        cursor.execute(f'SELECT * FROM tb_instituicao_ensino')
+        cursor.execute(
+            'SELECT * FROM tb_instituicao_ensino ORDER BY id LIMIT ? OFFSET ?',
+            (limit, offset)
+        )
 
-        # fetchall pega todos os registros retornados pelo banco e os armazena na variavel dataset
-        dataset = cursor.fetchall()
+        datasets = cursor.fetchall()
 
-        return dataset
+        return datasets
+
+    def countInstituicoes(self):
+        conn = get_conn()
+        cursor = conn.cursor()
+
+        cursor.execute('SELECT COUNT(*) FROM tb_instituicao_ensino')
+
+        return cursor.fetchone()[0]
 
     def getByIdIntituicoes(self, id):
         conn = get_conn()

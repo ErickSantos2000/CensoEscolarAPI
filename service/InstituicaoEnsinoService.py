@@ -1,6 +1,7 @@
 from schema.InstituicaoEnsinoSchema import InstituicaoEnsinoSchema
 from mapper.InstituicaoEnsinoMapper import InstituicaoEnsinoMapper
-from repository.InstituicaoEnsinoRepository import InstituicaoEnsinoRepository
+from repository.InstituicaoEscolarRepository import InstituicaoEnsinoRepository
+import math
 
 
 class InstituicaoEnsinoService:
@@ -10,21 +11,29 @@ class InstituicaoEnsinoService:
         self.instituicaoEnsinoMapper = InstituicaoEnsinoMapper()
         self.repository = InstituicaoEnsinoRepository()
 
-    def get_all(self):
+    def get_all(self, pagina, limite):
         listaIntuicoesEnsino = []
 
-        dataset = self.repository.getAllInstituicoes()
+        offset = (pagina - 1) * limite
+
+        dataset = self.repository.getAllInstituicoes(pagina, limite)
+        total = self.repository.countInstituicoes()
 
         # percorre cada linha da tupla retornada pelo dataset
         for row in dataset:
             instituicaoEnsino = self.instituicaoEnsinoMapper.to_entity(row)
-
             listaIntuicoesEnsino.append(instituicaoEnsino)
 
         # converte e monta a lista de resposta com todas as inttuições de ensino do banco
         insituicoesEnsinoReponse = self.instituicoes_schema.dump(listaIntuicoesEnsino, many=True)
 
-        return insituicoesEnsinoReponse
+        return {
+            "pagina": pagina,
+            "limite": limite,
+            "total": total,
+            "total_paginas": math.ceil(total / limite),
+            "dados": insituicoesEnsinoReponse
+        }
 
     def get_by_id(self, id):
         row = self.repository.getByIdIntituicoes(id)
