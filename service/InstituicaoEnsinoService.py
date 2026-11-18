@@ -79,11 +79,11 @@ class InstituicaoEnsinoService:
     def delete(self, id):
         row = self.repository.deleteInstituicoes(id)
 
-        # retorna None quando não encontra (o controller devolve o 404)
         if row is None:
             return None
 
-        nome = row[0]
-        ativo = row[1]
+        # com dict_row as colunas são acessadas pelo nome
+        nome = row["no_entidade"]
+        ativo = row["ativo"]
 
         return {"sucesso": True, "no_entidade": nome, "ativo": ativo}

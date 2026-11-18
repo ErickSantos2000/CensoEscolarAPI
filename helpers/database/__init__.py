@@ -1,15 +1,21 @@
 import os
-import sqlite3
+
+import psycopg
+from psycopg.rows import dict_row
 from flask import g
-
-
-DATABASE = os.getenv("DATABASE_PATH", "censoescolar.db")
-
 
 def get_conn():
     if "db" not in g:
-        g.db = sqlite3.connect(DATABASE)
-        g.db.row_factory = sqlite3.Row
+        # credenciais vêm do .env (carregado no app.py); nada fica escrito no código
+        g.db = psycopg.connect(
+            host=os.environ["DB_HOST"],
+            port=os.environ["DB_PORT"],
+            dbname=os.environ["DB_NAME"],
+            user=os.environ["DB_USER"],
+            password=os.environ["DB_PASSWORD"],
+            # equivalente ao sqlite3.Row: acessa as colunas pelo nome (row["id"])
+            row_factory=dict_row,
+        )
     return g.db
 
 

@@ -9,7 +9,7 @@ class InstituicaoEnsinoRepository:
         cursor = conn.cursor()
 
         cursor.execute(
-            'SELECT * FROM tb_instituicao_ensino ORDER BY id LIMIT ? OFFSET ?',
+            'SELECT * FROM tb_instituicao_ensino WHERE ativo = 1 ORDER BY id LIMIT %s OFFSET %s',
             (limit, offset)
         )
 
@@ -21,15 +21,19 @@ class InstituicaoEnsinoRepository:
         conn = get_conn()
         cursor = conn.cursor()
 
-        cursor.execute('SELECT COUNT(*) FROM tb_instituicao_ensino')
+        # com dict_row o resultado é um dicionário, por isso o alias "total"
+        cursor.execute('SELECT COUNT(*) AS total FROM tb_instituicao_ensino WHERE ativo = 1')
 
-        return cursor.fetchone()[0]
+        return cursor.fetchone()["total"]
 
     def getByIdIntituicoes(self, id):
         conn = get_conn()
         cursor = conn.cursor()
 
-        cursor.execute(f'SELECT * FROM tb_instituicao_ensino WHERE id = ?', (id,))
+        cursor.execute(
+            'SELECT * FROM tb_instituicao_ensino WHERE id = %s AND ativo = 1',
+            (id,)
+        )
 
         row = cursor.fetchone()
 
@@ -45,7 +49,7 @@ class InstituicaoEnsinoRepository:
             INSERT INTO tb_instituicao_ensino 
             (no_entidade, co_entidade, no_uf, sg_uf, co_uf, no_municipio, co_municipio, 
              nu_ano_censo, qt_mat_bas, qt_mat_inf, qt_mat_fund, qt_mat_med, qt_mat_prof, qt_mat_eja, qt_mat_esp) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) 
             RETURNING *
         ''', (
             data.get("no_entidade"), data.get("co_entidade"), data.get("no_uf"),
@@ -67,11 +71,11 @@ class InstituicaoEnsinoRepository:
 
         cursor.execute('''
             UPDATE tb_instituicao_ensino 
-            SET no_entidade = ?, co_entidade = ?, no_uf = ?, sg_uf = ?, co_uf = ?, 
-                no_municipio = ?, co_municipio = ?, nu_ano_censo = ?, qt_mat_bas = ?, 
-                qt_mat_inf = ?, qt_mat_fund = ?, qt_mat_med = ?, qt_mat_prof = ?, 
-                qt_mat_eja = ?, qt_mat_esp = ?
-            WHERE id = ?
+            SET no_entidade = %s, co_entidade = %s, no_uf = %s, sg_uf = %s, co_uf = %s, 
+                no_municipio = %s, co_municipio = %s, nu_ano_censo = %s, qt_mat_bas = %s, 
+                qt_mat_inf = %s, qt_mat_fund = %s, qt_mat_med = %s, qt_mat_prof = %s, 
+                qt_mat_eja = %s, qt_mat_esp = %s
+            WHERE id = %s
             RETURNING *
         ''', (
             data.get("no_entidade"), data.get("co_entidade"), data.get("no_uf"),
@@ -96,7 +100,7 @@ class InstituicaoEnsinoRepository:
 
         cursor.execute('''
             UPDATE tb_instituicao_ensino SET ativo = 0 
-            WHERE id = ? AND ativo = 1 RETURNING no_entidade, ativo ''', (id,))
+            WHERE id = %s AND ativo = 1 RETURNING no_entidade, ativo ''', (id,))
 
         row = cursor.fetchone()
 
