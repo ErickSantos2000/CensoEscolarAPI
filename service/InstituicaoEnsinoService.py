@@ -16,7 +16,7 @@ class InstituicaoEnsinoService:
 
         offset = (pagina - 1) * limite
 
-        dataset = self.repository.getAllInstituicoes(pagina, limite)
+        dataset = self.repository.getAllInstituicoes(limite, offset)
         total = self.repository.countInstituicoes()
 
         # percorre cada linha da tupla retornada pelo dataset
