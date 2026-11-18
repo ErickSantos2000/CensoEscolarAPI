@@ -1,6 +1,4 @@
 CensoEscolarData
 
-Link para o repositório do projeto:
-
-[[GitHub Repository: CensoEscolarData](https://github.com/ErickSantos2000/CensoEscolarData.git)](https://github.com/ErickSantos2000/CensoEscolarData/tree/postgres)
+Link para o repositório do projeto:(https://github.com/ErickSantos2000/CensoEscolarData.git)](https://github.com/ErickSantos2000/CensoEscolarData/tree/postgres)
 
